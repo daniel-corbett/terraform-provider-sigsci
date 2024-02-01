@@ -196,6 +196,10 @@ func calcAlertAdds(old, new []sigsci.Alert) []sigsci.Alert {
 	for _, newA := range new {
 		exists := false
 		for _, oldA := range old {
+			if newA.ID == "" && oldA.ID != "" {
+				newA.ID = oldA.ID
+			}
+
 			if oldA.ID == newA.ID {
 				exists = true
 			}
@@ -222,6 +226,10 @@ func calcAlertUpdates(old, new []sigsci.Alert) []sigsci.Alert {
 	var alertUpdates []sigsci.Alert
 	for _, oldA := range old {
 		for _, newA := range new {
+			if newA.ID == "" && oldA.ID != "" {
+				newA.ID = oldA.ID
+			}
+
 			if oldA.ID == newA.ID {
 				if !alertEquals(oldA, newA) {
 					alertUpdates = append(alertUpdates, newA)
@@ -237,6 +245,10 @@ func calcAlertDeletes(old, new []sigsci.Alert) []sigsci.Alert {
 	for _, oldA := range old {
 		exists := false
 		for _, newA := range new {
+			if newA.ID == "" && oldA.ID != "" {
+				newA.ID = oldA.ID
+			}
+
 			if newA.ID == oldA.ID {
 				exists = true
 			}
@@ -258,6 +270,10 @@ func calcDetectionAdds(templateID string, old, new []sigsci.Detection) []sigsci.
 	for _, newD := range new {
 		exists := false
 		for _, oldD := range old {
+			if newD.Name == "" && oldD.Name != "" {
+				newD.Name = oldD.Name
+			}
+
 			if newD.Name == oldD.Name {
 				exists = true
 			}
@@ -284,6 +300,10 @@ func calcDetectionDeletes(old, new []sigsci.Detection) []sigsci.Detection {
 	for _, oldD := range old {
 		exists := false
 		for _, newD := range new {
+			if newD.Name == "" && oldD.Name != "" {
+				newD.Name = oldD.Name
+			}
+
 			if oldD.Name == newD.Name {
 				exists = true
 			}
@@ -299,6 +319,12 @@ func calcDetectionUpdates(templateID string, old, new []sigsci.Detection) []sigs
 	var detectionUpdates []sigsci.Detection
 	for _, oldD := range old {
 		for _, newD := range new {
+			if (newD.ID == "" && newD.Name == "") &&
+				(oldD.ID != "" && oldD.Name != "") {
+				newD.ID = oldD.ID
+				newD.Name = oldD.Name
+			}
+
 			if oldD.Name == newD.Name {
 				if oldD.Enabled != newD.Enabled || !detectionFieldsEqual(newD.Fields, oldD.Fields) {
 					newD.Name = templateID
